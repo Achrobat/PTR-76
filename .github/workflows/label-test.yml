@@ -10,14 +10,22 @@ on:
       - unlabeled
       - review_requested
       - ready_for_review
+  workflow_run:
+    workflows:
+      - 96 - Label Test Review Signal
+    types:
+      - completed
 
 permissions:
   contents: read
-  issues: read
-  pull-requests: read
 
 jobs:
   label-test:
+    if: ${{ github.event_name == 'pull_request_target' }}
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
     uses: Achrobat/Achrobat-Label-Sync/.github/workflows/97-label-test.yml@master
     with:
       label_sync_repository: Achrobat/Achrobat-Label-Sync
@@ -25,3 +33,16 @@ jobs:
       target_repository: ${{ github.repository }}
       pull_request_number: ${{ github.event.pull_request.number }}
     secrets: inherit
+
+  refresh-label-test:
+    name: Refresh Label Test
+    if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      actions: write
+      contents: read
+    uses: Achrobat/Achrobat-Label-Sync/.github/workflows/96-refresh-label-test.yml@master
+    with:
+      label_sync_repository: Achrobat/Achrobat-Label-Sync
+      label_sync_ref: master
+      target_repository: ${{ github.repository }}
+      review_signal_run_id: ${{ github.event.workflow_run.id }}
