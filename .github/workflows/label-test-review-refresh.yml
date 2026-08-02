@@ -1,4 +1,4 @@
-name: 96 - Label Test Review Refresh
+name: Label Test Review Refresh
 
 on:
   pull_request_review:
