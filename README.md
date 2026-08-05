@@ -5,4 +5,4 @@ We've got fun AND games.
 
 Muffin Time
 
-Mug 
+Mug Man
